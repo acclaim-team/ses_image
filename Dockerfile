@@ -10,13 +10,16 @@ RUN apt-get update && \
 # Setup Screen Config
 RUN Xvfb :1 -screen 0 1024x768x16 &
 
-# TODO Setup NRF Tools
-#RUN curl https://www.nordicsemi.com/-/media/Software-and-other-downloads/Desktop-software/nRF-command-line-tools/sw/Versions-10-x-x/nRFCommandLineTools1050Linuxamd64.tar.gz -o nrftools.tar.gz && \
-#	tar -zxvf nrftools.tar.gz && \
-#	apt-get install -yf ./JLink_Linux_V654c_x86_64.deb && \
-#	apt-get install -yf ./nRF-Command-Line-Tools_10_5_0_Linux-amd64.deb && \
-#	rm nrftools.tar.gz
-#ENV PATH="/mergehex:/nrfjprog:$PATH"
+# Setup NRF Tools
+RUN curl https://nsscprodmedia.blob.core.windows.net/prod/software-and-other-downloads/desktop-software/nrf-command-line-tools/sw/versions-10-x-x/10-24-0/nrf-command-line-tools-10.24.0_linux-amd64.tar.gz -o nrftools.tar.gz && \
+	tar -zxvf nrftools.tar.gz && \
+        mkdir /opt/SEGGER && \
+        tar xzf JLink_*.tgz -C /opt/SEGGER && \
+        mv /opt/SEGGER/JLink* /opt/SEGGER/JLink && \
+        cp -r ./nrf-command-line-tools /opt && \
+        ln -s /opt/nrf-command-line-tools/bin/nrfjprog /usr/local/bin/nrfjprog && \
+        ln -s /opt/nrf-command-line-tools/bin/mergehex /usr/local/bin/mergehex && \
+	rm nrftools.tar.gz
 
 # Setup Embedded Studio
 RUN curl https://dl.a.segger.com/embedded-studio/Setup_EmbeddedStudio_ARM_v540c_linux_x64.tar.gz -o ses.tar.gz && \
